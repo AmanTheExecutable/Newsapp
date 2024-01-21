@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import { useEffect, useState } from "react";
+import "./App.css";
+import Search from "./Components/Search";
+import Card from "./Components/Card";
+import fetchData from "./Components/data";
+import Footer from "./Components/Footer";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const initialQuery = "India";
+	const [data, setData] = useState(null);
+
+	const updateData = newData => {
+		setData(newData);
+	};
+
+	useEffect(() => {
+		const fetcher = async () => {
+			const result = await fetchData(initialQuery, 1);
+			console.log(result);
+			setData(result);
+		};
+
+		fetcher();
+	}, []);
+
+	return (
+		<>
+			<Search updateData={updateData} initialQuery={initialQuery} />
+			<div className="main">
+				{data?.articles.map((data, index) => {
+					return (
+						<Card
+							key={index}
+							urlToImage={data.urlToImage}
+							title={data.title}
+							description={data.description}
+							url={data.url}
+						/>
+					);
+				})}
+			</div>
+			<Footer />
+		</>
+	);
 }
 
 export default App;
